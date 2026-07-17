@@ -46,23 +46,15 @@ class TI990:
     def is_connected(self) -> bool:
         return self.connection.is_connected
 
-    def connect(self) -> tuple[str, int]:
+    
+    
+    def start(self) -> None:
         self.connection.start()
 
         print(
-            f"Waiting for TriboScan at "
-            f"{self.connection.host}:{self.connection.port}..."
+            f"TI 990 host is listening at "
+            f"{self.connection.host}:{self.connection.port}"
         )
-
-        address = self.connection.wait_for_triboscan()
-
-        print(
-            f"Connected successfully: "
-            f"{address[0]}:{address[1]}"
-        )
-
-        self.connection.start_receiving()
-        return address
 
     def disconnect(self) -> None:
         self.connection.close()
