@@ -1,12 +1,12 @@
 import logging
+import time
 
 from ti990 import TI990
-from ti990.core.exceptions import ConnectionError
 
 
 def main() -> None:
     logging.basicConfig(
-        level=logging.DEBUG,
+        level=logging.INFO,
         format="%(asctime)s | %(levelname)s | %(name)s | %(message)s",
     )
 
@@ -16,34 +16,17 @@ def main() -> None:
     )
 
     try:
-        instrument.connection.start()
+        instrument.start()
 
-        print("Waiting for TriboScan to connect...")
+        print("Persistent TI 990 host is running.")
+        print("Waiting for TriboScan to connect.")
+        print("Press Ctrl+C to stop.")
 
-        address = instrument.connection.wait_for_triboscan()
-
-        print(
-            f"Connected successfully: "
-            f"{address[0]}:{address[1]}"
-        )
-
-        print()
-        print("Waiting synchronously for the first TriboScan message...")
-        print("Now enter Automated Mode in TriboScan.")
-
-        packet = instrument.connection.receive_once()
-
-        print()
-        print("Received packet from TriboScan")
-        print(f"Number of bytes: {packet.size}")
-        print(f"Hex: {packet.hex_string}")
-        print(f"Text guess: {packet.text_guess!r}")
-
-    except ConnectionError as exc:
-        print(f"Connection error: {exc}")
+        while instrument.is_running:
+            time.sleep(0.5)
 
     except KeyboardInterrupt:
-        print("\nStopped by user.")
+        print("\nStopping TI 990 host...")
 
     finally:
         instrument.disconnect()
